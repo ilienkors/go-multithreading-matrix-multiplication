@@ -2,14 +2,12 @@ package main
 
 import (
 	"fmt"
-	"sync"
 	"time"
 )
 
 const n = 2560
 
-func rowMultiplication(rowNumber int, matrixA, matrixB, matrixRes *[n][n]int, wg *sync.WaitGroup) {
-	defer wg.Done()
+func rowMultiplication(rowNumber int, matrixA, matrixB, matrixRes *[n][n]int) {
 	var sum int
 	for i := 0; i < len(matrixA); i++ {
 		sum = 0
@@ -31,17 +29,12 @@ func matrixGen(matrixA, matrixB, matrixRes *[n][n]int) {
 }
 
 func main() {
-	wg := new(sync.WaitGroup)
-	wg.Add(n)
-
 	var matrixA, matrixB, matrixRes [n][n]int
 	matrixGen(&matrixA, &matrixB, &matrixRes)
 
 	start := time.Now()
 	for i := 0; i < len(matrixA); i++ {
-		go rowMultiplication(i, &matrixA, &matrixB, &matrixRes, wg)
+		rowMultiplication(i, &matrixA, &matrixB, &matrixRes)
 	}
-	wg.Wait()
-
 	fmt.Print(time.Since(start), "\n")
 }
